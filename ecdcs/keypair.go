@@ -63,15 +63,7 @@ func (sk PrivateKey) ExportPublicKey(curve elliptic.Curve) (pk PublicKey, err er
 	var x *big.Int
 	var y *big.Int
 	priv := sk.privateBytes
-	N := curve.Params().N
-	bitSize := N.BitLen()
-	for x == nil {
-		priv[0] &= mask[bitSize%8]
-		priv[1] ^= 0x42
-
-		// 计算得到公钥的坐标为(x, y) = priv*G
-		x, y = curve.ScalarBaseMult(priv)
-	}
+	x, y = curve.ScalarBaseMult(priv)
 
 	publicBytes := elliptic.Marshal(curve, x, y)
 
@@ -90,6 +82,8 @@ func GenerateKey(curve elliptic.Curve, rand io.Reader) (sk PrivateKey, err error
 
 	for {
 		_, err = io.ReadFull(rand, privateBytes)
+		privateBytes[0] &= mask[bitSize%8]
+		privateBytes[1] ^= 0x42
 
 		if err != nil {
 			return

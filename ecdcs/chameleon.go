@@ -56,10 +56,15 @@ func (sk PrivateKey) ReSignature(curve elliptic.Curve, m1, m2 string, r1 []byte)
 	// 计算 r2 = (x*r1 + m1 - m2) / x
 	k.Mul(numberX, numberR1)
 	k.Add(k, numberM1)
+	k.Mod(k, N)
 	k.Sub(k, numberM2)
 	k.Mod(k, N)
 
-	k.DivMod(k, numberX, N)
+	inverseX := new(big.Int)
+	// 求逆元, 然后计算r2
+	inverseX.ModInverse(numberX, N)
+	k.Mul(k, inverseX)
+	k.Mod(k, N)
 
 	r2 = k.Bytes()
 	return
