@@ -35,6 +35,9 @@ func (sk PrivateKey) Signature(curve elliptic.Curve, message string) (random []b
 	random = numberR.Bytes()
 	signature = elliptic.Marshal(curve, x, y)
 
+	signatureByte32 := sha256.Sum256(signature)
+	signature = signatureByte32[:]
+
 	return
 }
 
@@ -81,6 +84,9 @@ func (pk PublicKey) Verify(curve elliptic.Curve, message string, signature []byt
 	x, y = curve.Add(x0, y0, x, y)
 
 	sign0 := elliptic.Marshal(curve, x, y)
+	signatureByte32 := sha256.Sum256(sign0)
+	sign0 = signatureByte32[:]
+
 	result = reflect.DeepEqual(sign0, signature)
 	return
 }
