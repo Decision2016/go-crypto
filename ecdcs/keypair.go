@@ -2,6 +2,7 @@ package ecdcs
 
 import (
 	"crypto/elliptic"
+	"crypto/rand"
 	"encoding/hex"
 	"io"
 	"math/big"
@@ -100,5 +101,10 @@ func GenerateKey(curve elliptic.Curve, rand io.Reader) (sk PrivateKey, err error
 		privateBytes: privateBytes,
 	}
 
+	return
+}
+
+func DefaultGenerateKey() (sk PrivateKey, err error) {
+	sk, err = GenerateKey(elliptic.P384(), rand.Reader)
 	return
 }
