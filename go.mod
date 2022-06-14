@@ -1,3 +1,3 @@
-module github.com/Decision2016/go-crypto
+module github.com/decision2016/go-crypto
 
 go 1.18
