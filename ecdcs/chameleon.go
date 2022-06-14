@@ -9,12 +9,12 @@ import (
 )
 
 // Signature 变色龙签名方法, 输入消息和曲线信息, 输出随机数和签名信息
-func (sk PrivateKey) Signature(curve elliptic.Curve, message string) (random []byte, signature []byte, err error) {
+func (sk PrivateKey) Signature(curve elliptic.Curve, message []byte) (random []byte, signature []byte, err error) {
 	N := curve.Params().N
 	//bitSize := N.BitLen()
 
 	// 先通过sha256来缩短消息长度, 然后再选取一个随机数进行签名
-	m := sha256.Sum256([]byte(message))
+	m := sha256.Sum256(message)
 	numberM := new(big.Int).SetBytes(m[:])
 	numberR, err := rand.Int(rand.Reader, N)
 
@@ -39,6 +39,10 @@ func (sk PrivateKey) Signature(curve elliptic.Curve, message string) (random []b
 	signature = signatureByte32[:]
 
 	return
+}
+
+func (sk PrivateKey) SignatureString(curve elliptic.Curve, message string) (random []byte, signature []byte, err error) {
+	return sk.Signature(curve, []byte(message))
 }
 
 // ReSignature 变色龙签名更新方法, 输入消息m1和m2以及前一次是随机数r1, 输出新的签名和r2
