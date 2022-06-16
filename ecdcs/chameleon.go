@@ -4,6 +4,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
 	"math/big"
 	"reflect"
 )
@@ -78,11 +79,17 @@ func (sk PrivateKey) ReSignature(curve elliptic.Curve, m1, m2 string, r1 []byte)
 }
 
 // Verify 验证变色龙签名是否正确
-func (pk PublicKey) Verify(curve elliptic.Curve, message string, signature []byte, random []byte) (result bool, err error) {
-	sha256M := sha256.Sum256([]byte(message))
+func (pk PublicKey) Verify(curve elliptic.Curve, message []byte, signature string, random string) (result bool, err error) {
+	sha256M := sha256.Sum256(message)
 
 	x0, y0 := elliptic.Unmarshal(curve, pk.publicBytes)
-	x0, y0 = curve.ScalarMult(x0, y0, random)
+	randomBytes, err := hex.DecodeString(random)
+
+	if err != nil {
+		return false, err
+	}
+
+	x0, y0 = curve.ScalarMult(x0, y0, randomBytes)
 
 	x, y := curve.ScalarBaseMult(sha256M[:])
 	x, y = curve.Add(x0, y0, x, y)
@@ -91,6 +98,6 @@ func (pk PublicKey) Verify(curve elliptic.Curve, message string, signature []byt
 	signatureByte32 := sha256.Sum256(sign0)
 	sign0 = signatureByte32[:]
 
-	result = reflect.DeepEqual(sign0, signature)
+	result = reflect.DeepEqual(hex.EncodeToString(sign0), signature)
 	return
 }
