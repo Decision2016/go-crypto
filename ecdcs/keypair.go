@@ -20,17 +20,17 @@ type PublicKey struct {
 var mask = []byte{0xff, 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f}
 
 // ToHexString 转换私钥信息为16进制字符串
-func (sk PrivateKey) ToHexString() string {
+func (sk *PrivateKey) ToHexString() string {
 	return hex.EncodeToString(sk.privateBytes)
 }
 
 // ToHexString 转换私钥信息为16进制字符串
-func (pk PublicKey) ToHexString() string {
+func (pk *PublicKey) ToHexString() string {
 	return hex.EncodeToString(pk.publicBytes)
 }
 
 // FromHexString 通过16进制字符串得到私钥信息
-func (sk PrivateKey) FromHexString(s string) (err error) {
+func (sk *PrivateKey) FromHexString(s string) (err error) {
 	decodeBytes, err := hex.DecodeString(s)
 
 	if err != nil {
@@ -42,7 +42,7 @@ func (sk PrivateKey) FromHexString(s string) (err error) {
 }
 
 // FromHexString 通过16进制字符串得到公钥信息
-func (pk PublicKey) FromHexString(s string) (err error) {
+func (pk *PublicKey) FromHexString(s string) (err error) {
 	decodeBytes, err := hex.DecodeString(s)
 
 	if err != nil {
@@ -59,7 +59,7 @@ func (pk PublicKey) FromHexString(s string) (err error) {
 	pk： 返回得到的公钥
 	err: 返回错误信息
 */
-func (sk PrivateKey) ExportPublicKey(curve elliptic.Curve) (pk PublicKey, err error) {
+func (sk *PrivateKey) ExportPublicKey(curve elliptic.Curve) (pk PublicKey, err error) {
 
 	var x *big.Int
 	var y *big.Int
