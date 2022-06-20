@@ -47,11 +47,11 @@ func (sk PrivateKey) SignatureString(curve elliptic.Curve, message string) (rand
 }
 
 // ReSignature 变色龙签名更新方法, 输入消息m1和m2以及前一次是随机数r1, 输出新的签名和r2
-func (sk PrivateKey) ReSignature(curve elliptic.Curve, m1, m2 string, r1 []byte) (r2 []byte) {
+func (sk PrivateKey) ReSignature(curve elliptic.Curve, m1, m2 []byte, r1 []byte) (r2 []byte) {
 	N := curve.Params().N
 
-	sha256M1 := sha256.Sum256([]byte(m1))
-	sha256M2 := sha256.Sum256([]byte(m2))
+	sha256M1 := sha256.Sum256(m1)
+	sha256M2 := sha256.Sum256(m2)
 
 	numberX := new(big.Int).SetBytes(sk.privateBytes)
 
